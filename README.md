@@ -12,7 +12,7 @@ Odoo 18 module that automatically synchronizes invoice and accounting entry due 
 
 ## Requirements
 
-- Odoo 18.0
+- Odoo 19.0
 - account module
 - calendar module
 - account_followup module (recommended)
