@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.due.date.calendar</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Calendario de Vencimientos">
+                    <setting help="Sincroniza automáticamente las fechas de vencimiento al calendario de Odoo">
+                        <field name="sync_due_dates_to_calendar"/>
+                        <label for="sync_due_dates_to_calendar"/>
+                        <div class="content-group mt16" invisible="not sync_due_dates_to_calendar">
+                            <div class="mt8">
+                                <field name="sync_invoice_due_dates" class="oe_inline"/>
+                                <label for="sync_invoice_due_dates" string="Envía Vencimientos de Comprobantes"/>
+                            </div>
+                            <div class="mt8">
+                                <field name="sync_move_line_due_dates" class="oe_inline"/>
+                                <label for="sync_move_line_due_dates" string="Envía Vencimientos de Asientos Contables"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="calendar_due_date_user_ids" class="col-lg-5 o_light_label" string="Usuarios que verán los vencimientos"/>
+                                <field name="calendar_due_date_user_ids" widget="many2many_tags" placeholder="Todos los usuarios" class="col-lg-7"/>
+                            </div>
+                            <div class="row">
+                                <div class="offset-lg-5 col-lg-7 text-muted">
+                                    Deja vacío para que todos vean los eventos
+                                </div>
+                            </div>
+                            <div class="row mt16">
+                                <label for="calendar_due_date_alarm_days" class="col-lg-5 o_light_label" string="Días de anticipación para alarma"/>
+                                <div class="col-lg-7">
+                                    <field name="calendar_due_date_alarm_days" class="oe_inline"/>
+                                    <span class="o_form_label"> días antes del vencimiento</span>
+                                </div>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
