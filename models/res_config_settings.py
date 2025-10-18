@@ -31,11 +31,10 @@ class ResConfigSettings(models.TransientModel):
              'Si está vacío, los eventos serán visibles para todos.'
     )
     
-    # Anticipación de notificación
+    # Anticipación de notificación - SIN config_parameter para manejar el 0
     calendar_due_date_alarm_days = fields.Integer(
         string='Días de anticipación para alarma',
         default=3,
-        config_parameter='account_due_date_calendar.calendar_due_date_alarm_days',
         help='Número de días antes del vencimiento para crear una alarma'
     )
     
@@ -44,15 +43,22 @@ class ResConfigSettings(models.TransientModel):
         """Recuperar valores de configuración"""
         res = super(ResConfigSettings, self).get_values()
         
-        # Obtener los IDs de usuarios desde ir.config.parameter
         ICPSudo = self.env['ir.config_parameter'].sudo()
-        user_ids_str = ICPSudo.get_param('account_due_date_calendar.calendar_due_date_user_ids', '[]')
         
+        # Obtener los IDs de usuarios
+        user_ids_str = ICPSudo.get_param('account_due_date_calendar.calendar_due_date_user_ids', '[]')
         try:
             user_ids = eval(user_ids_str) if user_ids_str else []
             res['calendar_due_date_user_ids'] = [(6, 0, user_ids)]
         except:
             res['calendar_due_date_user_ids'] = [(6, 0, [])]
+        
+        # Obtener días de anticipación (manejar explícitamente el 0)
+        alarm_days = ICPSudo.get_param('account_due_date_calendar.calendar_due_date_alarm_days', '3')
+        try:
+            res['calendar_due_date_alarm_days'] = int(alarm_days)
+        except:
+            res['calendar_due_date_alarm_days'] = 3
         
         return res
     
@@ -60,7 +66,11 @@ class ResConfigSettings(models.TransientModel):
         """Guardar valores de configuración"""
         super(ResConfigSettings, self).set_values()
         
-        # Guardar los IDs de usuarios en ir.config.parameter
         ICPSudo = self.env['ir.config_parameter'].sudo()
+        
+        # Guardar los IDs de usuarios
         user_ids = self.calendar_due_date_user_ids.ids
         ICPSudo.set_param('account_due_date_calendar.calendar_due_date_user_ids', str(user_ids))
+        
+        # Guardar días de anticipación (incluso si es 0)
+        ICPSudo.set_param('account_due_date_calendar.calendar_due_date_alarm_days', str(self.calendar_due_date_alarm_days))
